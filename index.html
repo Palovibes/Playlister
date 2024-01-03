@@ -1,26 +1,27 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html> <!-- specify document type as HTML5 -->
+<html lang="en"> <!-- set language of the document to English -->
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="main.css">
+  <meta charset="UTF-8"> <!-- specifies character encoding of the document as UTF-8 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- sets the viewport for responsive design -->
+  <link href="https://fonts.googleapis.com/css2?family=Arima+Madurai:wght@900&display=swap" rel="stylesheet"> <!-- imports a custom font from Google Fonts -->
+  <link rel="stylesheet" href="Playlister/main.css"> <!-- links to my external CSS stylesheet -->
   <script src="https://code.jquery.com/jquery-3.7.1.min.js" 
           integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
-  <script defer src="app.js"></script>
-  <title>Spotify Playlist Finder</title>
+  <!-- includes JQuery library from a CDN (Content Delivery Network) -->
+  <script defer src="Playlister/app.js"></script> <!-- includes my JS file with defer attribute -->
+  <title>Spotify Playlist Finder</title> <!-- set the title of my webpage -->
 </head>
 <body>
   <div id="main">
     <div id="header">
-      <h1>Spotify Playlist Finder</h1>
+      <h1>Spotify Playlist Finder</h1> <!-- main heading of the page -->
     </div>
-    <form id="playlist-form">
-      <input type="text" name="search" placeholder="Enter Artist Name">
-      <button type="submit" id="submit">Search</button>
+    <form id="playlist-form"> <!-- form element with id "playlist-form" -->
+      <input type="text" name="search" placeholder="Enter Artist Name"> <!-- text input field with placeholder -->
+      <button type="submit" id="submit">Search</button> <!-- my submit button with id "submit" -->
     </form>
-    <div id="results"></div>
-    <div id="error-message"></div>
+    <div id="results"></div> <!-- container for displaying search results -->
+    <div id="error-message"></div> <!-- container for displaying error messages -->
   </div>
 </body>
 </html>
