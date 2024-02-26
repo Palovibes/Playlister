@@ -1,55 +1,58 @@
 const APIController = (function () {
-    // Define the Spotify API client credentials
+    // Spotify API client credentials
     const clientId = '1f105464f62c4490abc6405efdefd56c';
     const clientSecret = '8f90024fef514d7fae9b59dcc44692b0';
 
-    // Variables to store the access token and its expiration time
+    // store the access token and its expiration time
     let accessToken;
     let expirationTime;
 
-    // Function to get the access token from Spotify
+    // get the access token from Spotify
     const getToken = async () => {
-        // If we have a valid access token and it hasn't expired, return it
+        // if valid access token and not expired, return it
         if (accessToken && Date.now() < expirationTime) {
             return accessToken;
         }
 
         // Otherwise, make a request to Spotify to obtain a new access token
         const result = await fetch('https://accounts.spotify.com/api/token', {
+            // context of OAuth 2.0 and the "Client Credentials Flow"     
             method: 'POST',
             headers: {
                 'Content-Type': 'application/x-www-form-urlencoded',
                 'Authorization': 'Basic ' + btoa(clientId + ':' + clientSecret)
             },
+            // request access token server-server
             body: 'grant_type=client_credentials'
         });
 
-        // Parse the response and store the new access token and its expiration time
+        // parse response and store the new access token and its expiration time
         const data = await result.json();
         accessToken = data.access_token;
         expirationTime = Date.now() + data.expires_in * 1000;
         return accessToken;
     };
 
-    // Expose the getToken function as a public method of the APIController
+    // expose getToken function as a public method of the APIController
     return {
         getToken: getToken
     };
 })();
 
 $(document).ready(function () {
-    // When the document is ready, handle form submission
+    // when the document is ready, handle form submission
     $('#playlist-form').on('submit', async function (event) {
         event.preventDefault(); // Prevent the default form submission behavior
 
         try {
-            // Get the access token using the getToken function from APIController
+            // access token using the getToken function from APIController
             const accessToken = await APIController.getToken();
+            console.log("Access Token:", accessToken); // Check if token is received
 
-            // Get the artist name from the input field
+            // artist name from the input field
             const artistName = $('input[name="search"]').val();
 
-            // Create the URL for searching artists on Spotify
+            // URL for searching artists on Spotify
             const artistSearchURL = `https://api.spotify.com/v1/search?q=${encodeURIComponent(artistName)}&type=artist`;
 
             // Fetch artist data from Spotify using the access token
@@ -57,8 +60,11 @@ $(document).ready(function () {
                 headers: { 'Authorization': 'Bearer ' + accessToken }
             });
 
-            // Parse the artist data as JSON
+            // Parse artist data as JSON
             const artistData = await artistResponse.json();
+
+            console.log("Artist Data:", artistData);
+
 
             // Call the displayArtists function to show the search results
             displayArtists(artistData.artists.items);
@@ -71,27 +77,34 @@ $(document).ready(function () {
 
 // Function to display the list of artists
 function displayArtists(artists) {
-    // Clear the existing results
     $('#results').empty();
 
-    // Loop through each artist and create a result card for them
     artists.forEach(artist => {
-        // Create a result card for the current artist
         const artistCard = `
-            <div class="result-card">
-                <h3>${artist.name}</h3> <!-- Display the artist's name -->
-                <img src="${artist.images[0]?.url || 'default-image-url.jpg'}" alt="${artist.name}">
-                <!-- Display the artist's image (or a default image if not available) with alt text as the artist's name -->
-                <p>Followers: ${artist.followers.total.toLocaleString()}</p>
-                <!-- Display the number of followers for the artist -->
-                <p>Genres: ${artist.genres.join(', ')}</p>
-                <!-- Display the genres associated with the artist, joined by commas -->
-                <a href="${artist.external_urls.spotify}" target="_blank">View on Spotify</a>
-                <!-- Provide a link to view the artist on Spotify in a new tab -->
+            <div class="card mb-3">
+                <div class="row no-gutters">
+                    <div class="col-md-4">
+                        <img src="${artist.images[0]?.url || 'default-image-url.jpg'}" class="card-img" alt="${artist.name}">
+                    </div>
+                    <div class="col-md-8">
+                        <div class="card-body">
+                            <h5 class="card-title">${artist.name}</h5>
+                            <p class="card-text">Genres: ${artist.genres.join(', ')}</p>
+                            <p class="card-text">Followers: ${artist.followers.total.toLocaleString()}</p>
+                            <a href="${artist.external_urls.spotify}" target="_blank" class="btn btn-primary">View on Spotify</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         `;
 
-        // Append the artist card to the results container
         $('#results').append(artistCard);
     });
 }
+
+
+// fetch artist id and associated genres using v1/ search end point and type set artist 
+// find artists similar to the one i searched, or find the genres associated with the artist using /v1/artists/{id}/related-artists endpoint.
+// playslist: /v1/browse/featured-playlists searching for playlists with keywords that match the artist's genres
+
+// as a bonus i will like to also return who owns the playlist poc, numbers of playlist followers, genres, and last time it was updated.
